@@ -85,15 +85,15 @@ class StockDeleteView(View):                                                    
     success_message = "Stock has been deleted successfully"                             # displays message when form is submitted
     
     def get(self, request, pk):
-        stock = get_object_or_404(Category, pk=pk)
+        stock = get_object_or_404(Stock, pk=pk)
         return render(request, self.template_name, {'object' : stock})
 
     def post(self, request, pk):  
-        stock = get_object_or_404(Category, pk=pk)
+        stock = get_object_or_404(Stock, pk=pk)
         stock.is_deleted = True
         stock.save()                                               
         messages.success(request, self.success_message)
-        return redirect('category')
+        return redirect('inventory')
     
 class CategoryDeleteView(View):                                                            # view class to delete stock
     template_name = "delete_category.html"                                                 # 'delete_stock.html' used as the template
