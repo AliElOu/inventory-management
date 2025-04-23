@@ -41,3 +41,25 @@
     color:#fff;
     border-radius: 7px;
 }
+
+
+.info-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.02);
+  }
+  .info-icon {
+    font-size: 24px;
+    color: #4a6fa5;
+    margin-right: 10px;
+  }
+  .info-label {
+    font-size: 14px;
+    color: #666;
+  }
+  .info-value {
+    font-weight: bold;
+    font-size: 20px;
+  }

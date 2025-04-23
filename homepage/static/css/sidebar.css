@@ -17,9 +17,10 @@
     left: 0;
     height: 100vh;
     z-index: 999;
-    background: #4F102B;
-    color: #fff;
+    background: #F5F7FA;
+    color: #4a5568;
     transition: all 0.3s;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar.active {
@@ -28,16 +29,16 @@
 
 .sidebar-header {
     padding: 20px;
-    background: #4F102B;
+    background: #f7f9fc;
+    color: white;
 }
 
 .sidebar-components {
-    padding: 20px 0;
-    border-bottom: 1px solid #4F102B;
+    padding: 10px 0;
 }
 
 .sidebar-paragraph {
-    color: #fff;
+    color: #4a5568;
     padding: 10px;
 }
 
@@ -54,20 +55,38 @@ a.right-arrow[data-toggle="collapse"] {
 }
 
 .sidebar-button {
-    padding: 10px;
-    font-size: 1.1em;
-    display: block;
+    padding: 12px 15px;
+    font-size: 0.95em;
+    display: flex;
+    align-items: center;
+    margin: 2px 10px;
+    border-radius: 8px;
+}
+
+.sidebar-button i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
 }
 
 .sidebar-button:hover {
-    color: #4F102B;
-    background: #fff;
+    color: #3b82f6;
+    background: #e6eeff;
+}
+
+.sidebar-button.active {
+    color: white;
+    background: #3b82f6;
+}
+
+.sidebar-button.active:hover {
+    color: white;
 }
 
 .sidebar-subitem {
-    font-size: 0.9em !important;
-    padding-left: 30px !important;
-    background: #69163a;
+    font-size: 0.85em !important;
+    padding-left: 45px !important;
+    background: transparent;
 }
 
 ul.CTAs {
@@ -83,8 +102,8 @@ ul.CTAs a {
 }
 
 a.nav-button {
-    background: #fff;
-    color: #4F102B;
+    background: #3b82f6;
+    color: white;
 }
 
 .bottomleft {
@@ -92,6 +111,8 @@ a.nav-button {
     position: absolute;
     min-width: 250px;
     max-width: 250px;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 10px;
 }
 
 /* ---------------------------------------------------
