@@ -24,7 +24,7 @@ html {
 }
 
 .form-group {
-  color: white;
+  color: #414141;
 }
 
 label {
@@ -34,7 +34,7 @@ label {
 
 .fal {
   /* Add any text to turn white */
-  color: white;
+  color: #414141;
 }
 
 .breadcrumb {
@@ -43,7 +43,7 @@ label {
 }
 
 p {
-  color: white;
+  color: #414141;
   /* For About */
 }
 
