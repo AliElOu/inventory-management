@@ -19,5 +19,18 @@ class Stock(models.Model):
 
     def __str__(self):
 	    return self.name
+     
+
+class SalesPrediction(models.Model):
+    stock = models.ForeignKey(Stock, on_delete=models.CASCADE)
+    predicted_units = models.FloatField()
+
+    weather_condition = models.CharField(max_length=50)
+    seasonality = models.CharField(max_length=20)
+    holiday = models.BooleanField()
+
+    date = models.DateField(auto_now_add=True)
+    day_offset = models.IntegerField(default=0) 
+
     
 

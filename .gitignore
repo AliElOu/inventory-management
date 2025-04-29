@@ -147,4 +147,6 @@ dmypy.json
 major project.code-workspace
 
 # End of https://www.gitignore.io/api/django
+
 testing.ipynb
+inventory/management/commands/out_of_stock.pkl

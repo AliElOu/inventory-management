@@ -35,7 +35,14 @@ def get_weather_condition(city ,day_offset=0):
                 closest_weather = weather
 
     if closest_weather:
-        return closest_weather.status
+        if closest_weather.status == "Snow":
+            return "Snowy"
+        elif closest_weather.status == "Clouds":
+            return "Cloudy"
+        elif closest_weather.status == "Clear":
+            return "Sunny"
+        else:
+            return "Rainy"
     else:
         return "Unknown"
     
