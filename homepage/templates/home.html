@@ -8,19 +8,6 @@
 
 {% block content %}
 
-<style>
-    .chart-container {
-        width: 95%;
-        max-width: 1100px;
-        height: 250px;
-        margin: 20px auto;
-    }
-    .title {
-        text-align: center; 
-        font-family: Arial, sans-serif;
-        margin-bottom: 20px;
-    }
-</style>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
@@ -56,13 +43,48 @@
         </div>
         </div>
         <div class="col-md-3 col-sm-6">
-        <div class="info-card d-flex align-items-center">
-            <i class="bi bi-exclamation-triangle-fill info-icon"></i>
+        <div class="info-card-r d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#stockoutModal">
+            <i class="bi bi-exclamation-triangle-fill info-icon" style ="color:#DC3545;"></i>
             <div>
-            <div class="info-label">Stockout Risks</div>
-            <div class="info-value">5</div>
+            <div style ="color:#DC3545;" class="info-label">Stockout Risks</div>
+            <div style ="color:#DC3545;" class="info-value"> {{ stockout_risks_number }} </div>
             </div>
         </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="stockoutModal" tabindex="-1" aria-labelledby="stockoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="stockoutModalLabel">Stockout Risks</h5>
+                </div>
+                <div class="modal-body">
+                    <table class="stockout-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Current Stock</th>
+                                <th style="text-align: end;">Predicted Sales<br><div style="color: grey;">Next Day</div></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for name, stock, predicted in stock_predictions_info %}
+                            <tr>
+                                <td>{{ name }}</td>
+                                <td style="text-align: end;">{{ stock }}</td>
+                                <td style="text-align: right;">    
+                                    <div class="d-flex align-items-center justify-content-end">
+                                        <i class="bi bi-exclamation-triangle-fill alert-icon me-3"></i>
+                                        <span>&nbsp {{ predicted }}</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 

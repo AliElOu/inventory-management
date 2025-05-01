@@ -4,41 +4,41 @@
 	position: fixed;
 	top: 0px;
 	left: 0px;
-	background: #000;
+	background: #7F7F7F;
 	width: 100%;
 	z-index: 10;
 }
 #dialogbox{
 	display: none;
 	position: fixed;
-	background:  #ff3c16 ;
+	background:  #fff ;
     border-radius: 7px;
 	width: 550px;
 	z-index: 10;
 }
 #dialogbox > div { 
-    background:#000; 
+    background:#F8F9FA; 
     margin: 4px; 
     border-radius: 7px;
 }
 #dialogbox > div > #dialogboxhead{ 
-    background: #000; 
-    font-size: 1.8rem; 
+    background: #F8F9FA; 
+    font-size: 1.6rem; 
     padding: 10px; 
-    color: #ff3c16 ;
+    color: #000 ;
     font-weight: bold; 
     border-radius: 7px;
 }
 #dialogbox > div > #dialogboxbody{ 
-    background:#000; 
-    font-size: 1.5rem; 
+    background:#fff; 
+    font-size: 1.3rem; 
     padding: 20px; 
-    color:#fff; 
+    color:#000; 
 }
 #dialogbox > div > #dialogboxfoot{ 
-    background: #000; 
+    background: #fff; 
     padding: 10px; 
-    color:#fff;
+    color:#000;
     border-radius: 7px;
 }
 
@@ -50,6 +50,15 @@
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.02);
   }
+
+.info-card-r {
+  border: 1px solid #DC3545;
+  border-radius: 12px;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.02);
+}
+
   .info-icon {
     font-size: 24px;
     color: #4a6fa5;

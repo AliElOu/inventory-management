@@ -41,21 +41,31 @@ class HomeView(View):
         )
 
         all_predictions = SalesPrediction.objects.select_related('stock').order_by('-date')
-
         latest_predictions = OrderedDict()
 
         for pred in all_predictions:
-            if pred.stock_id not in latest_predictions:
+            if (pred.stock_id not in latest_predictions):
                 latest_predictions[pred.stock_id] = pred
-
         product_names = []
         stock_data = []
-        predicted_sales_data = []
-
+        predicted_sales_data = [] 
+        product_names2 = []
+        stock_data2 = []
+        predicted_sales_data2 = []
+        print(latest_predictions.values())
         for pred in latest_predictions.values():
-            product_names.append(pred.stock.name[:8]+ "...")
+            product_names.append(pred.stock.name[:8] + "...")
             stock_data.append(pred.stock.quantity)
             predicted_sales_data.append(pred.predicted_units)
+        predicted_sales_data = arrondi_special(predicted_sales_data)
+
+        for pred in latest_predictions.values():
+            if ((pred.stock.quantity - pred.predicted_units) <= 20):
+                product_names2.append(pred.stock.name[:15] + "...")
+                stock_data2.append(pred.stock.quantity)
+                predicted_sales_data2.append(pred.predicted_units)
+        predicted_sales_data2 = arrondi_special(predicted_sales_data2)
+
         context = {
             'labels'    : labels,
             'data'      : data,
@@ -68,9 +78,15 @@ class HomeView(View):
             'sales_by_day': sales_by_day,
             'product_names': product_names,
             'stock_data': stock_data,
-            'predicted_sales_data': predicted_sales_data
+            'predicted_sales_data': predicted_sales_data,
+            'stock_predictions_info': zip(product_names2, stock_data2, predicted_sales_data2),
+            'stockout_risks_number': len(product_names2)
         }
         return render(request, self.template_name, context)
 
 class AboutView(TemplateView):
     template_name = "about.html"
+
+
+def arrondi_special(valeurs):
+    return [int(x) + 1 if x - int(x) > 0.5 else int(x) for x in valeurs]

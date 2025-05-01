@@ -21,6 +21,7 @@ body,
 html {
   height: 100%;
   background-color: white;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 .form-group {
@@ -299,9 +300,9 @@ html { width: 100%; height:100%; overflow:hidden; }
 }
 
 .ghost-button {
-  color: rgb(255, 255, 255);
+  color: #169BB0;
   background-color: transparent;
-  border: 2px solid rgb(255, 255, 255);
+  border: 2px solid #169BB0;
   font-size: 17px;
   padding: 7px 12px;
   font-weight: bolder;
@@ -316,8 +317,7 @@ html { width: 100%; height:100%; overflow:hidden; }
 .ghost-button:hover,
 .ghost-button:active {
   color: #fff;
-  background-color: transparent;
-  box-shadow: 0 2px 7px #ffffff;
+  background-color: #169BB0 ;
 }
 
 
@@ -384,8 +384,7 @@ html { width: 100%; height:100%; overflow:hidden; }
 .ghost-pink:hover,
 .ghost-pink:active {
   color: #fff;
-  background-color: transparent;
-  box-shadow: 0 2px 7px #414141;
+  background-color: #000;
 }
 
 
@@ -443,4 +442,17 @@ html { width: 100%; height:100%; overflow:hidden; }
 
 .panel-body-text {
   font-size: 1.2rem;
+}
+
+
+.chart-container {
+  width: 95%;
+  max-width: 1100px;
+  height: 250px;
+  margin: 20px auto;
+}
+.title {
+  text-align: center; 
+  font-family: Arial, sans-serif;
+  margin-bottom: 20px;
 }
