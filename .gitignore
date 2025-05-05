@@ -148,5 +148,6 @@ major project.code-workspace
 
 # End of https://www.gitignore.io/api/django
 
+dump.sql
 testing.ipynb
 inventory/management/commands/out_of_stock.pkl
