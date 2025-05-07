@@ -40,7 +40,7 @@ class HomeView(View):
             .order_by('billno__time__date')
         )
 
-        all_predictions = SalesPrediction.objects.select_related('stock').order_by('-date')
+        all_predictions = SalesPrediction.objects.select_related('stock').filter(stock__is_deleted=False).order_by('-date')
         latest_predictions = OrderedDict()
 
         for pred in all_predictions:

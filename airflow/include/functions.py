@@ -28,7 +28,7 @@ def get_weather_condition(city ,day_offset=0):
 
         forecast = mgr.forecast_at_place(CITY_NAME, '3h')
 
-        target_date = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=day_offset)
+        target_date = datetime.now(timezone.utc) + timedelta(days=day_offset)
 
         target_day = target_date.date()
 

@@ -10,7 +10,7 @@ with DAG (
     dag_id= "make_prediction",
     start_date = datetime(2025,5,1,8,0,0),
     description='Prévision journalière des ventes par produit',
-    schedule_interval = timedelta(minutes=5),
+    schedule_interval = timedelta(hours=24),
     catchup=False,
     dagrun_timeout= timedelta(minutes=2)
 ) as dag:  
