@@ -1,5 +1,24 @@
 version: '3.9'
 
+x-airflow-common: &airflow-common
+  build:
+    context: .
+    dockerfile: Dockerfile.airflow
+  environment:
+    DB_NAME: ${DB_NAME}
+    DB_USER: ${DB_USER}
+    DB_PASSWORD: ${DB_PASSWORD}
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: mysql+mysqldb://root:${DB_PASSWORD}@db:3306/${DB_NAME}
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/airflow/dags
+  volumes:
+    - .:/opt/airflow
+    - airflow_logs:/opt/airflow/logs
+    - airflow_plugins:/opt/airflow/plugins
+    - ./airflow/include:/opt/airflow/include
+
+
 services:
   db:
     image: mysql:8.0
@@ -18,6 +37,7 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
+      - ./airflow/include:/shared
     ports:
       - "8000:8000"
     depends_on:
@@ -39,5 +59,30 @@ services:
     depends_on:
       - db
 
+  airflow-init:
+    <<: *airflow-common
+    entrypoint: /bin/bash
+    command: -c "airflow db migrate && airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com"
+    depends_on:
+      - db
+
+  airflow-webserver:
+    <<: *airflow-common
+    restart: always
+    depends_on:
+      - airflow-init
+    ports:
+      - "8081:8080"
+    command: webserver
+
+  airflow-scheduler:
+    <<: *airflow-common
+    restart: always
+    depends_on:
+      - airflow-webserver
+    command: scheduler
+
 volumes:
   mysql_data:
+  airflow_logs:
+  airflow_plugins:

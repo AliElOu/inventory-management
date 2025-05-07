@@ -1,10 +1,13 @@
 Django==5.1.7
 joblib==1.4.0
 pandas==2.2.3
-pyowm==3.3.0
-django-crispy-forms
+pyowm
 crispy-bootstrap4
 django-widget-tweaks==1.5.0
 django-login-required-middleware==0.9.0
 django-filter==25.1
 mysqlclient
+apache-airflow==2.9.1
+apache-airflow-providers-mysql
+scikit-learn
+xgboost

@@ -146,8 +146,9 @@ dmypy.json
 .vscode
 major project.code-workspace
 
+logs
 # End of https://www.gitignore.io/api/django
 
 dump.sql
 testing.ipynb
-inventory/management/commands/out_of_stock.pkl
+airflow/include/out_of_stock.pkl
