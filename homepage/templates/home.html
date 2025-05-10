@@ -11,7 +11,6 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
-    <div style="color:#414141; font-style: bold; font-size: 3rem;">Welcome, {{ request.user.username }}</div>
 
     <br>
     <div class="row g-4">
@@ -88,7 +87,6 @@
         </div>
     </div>
 
-    <br>
 
     <div class="row">
         <div class="col-md-8">
@@ -210,43 +208,65 @@
 
 <canvas id="salesChart" style="height: 300px;"></canvas>
 
-<script>
 
-  const ctx = document.getElementById('salesChart').getContext('2d');
-    
-  const salesChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: [
+<script>
+    const ctx = document.getElementById('salesChart').getContext('2d');
+  
+    const realDates = [
         {% for item in sales_by_day %}
           "{{ item.billno__time__date }}",
         {% endfor %}
-       ],
-      datasets: [{
-        label: 'Sales',
-        data: [
+       ];
+    const predictedDates = [
+      "May 11, 2025", "May 12, 2025", "May 13, 2025", "May 14, 2025",
+      "May 15, 2025", "May 16, 2025", "May 17, 2025"
+    ];
+  
+    const realSales = [
           {% for item in sales_by_day %}
             {{ item.total_sales }},
           {% endfor %}
-        ],
-        fill: true,
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-        borderColor: '#3b82f6',
-        pointBackgroundColor: 'rgba(54, 162, 235, 1)',
-        tension: 0.4
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          display: false
+        ];
+    const predictedSales = [1100, 1250, 1350, 1000, 800, 900, 1000];
+  
+    const allLabels = [...realDates, ...predictedDates];
+  
+    const salesChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: allLabels,
+        datasets: [
+          {
+            label: 'Ventes réelles',
+            data: [...realSales, null, null, null, null, null, null, null],
+            fill: true,
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: '#3b82f6',
+            pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+            tension: 0.4
+          },
+          {
+            label: 'Prévisions',
+            data: [null, null, null, null, null, null, null, ...predictedSales],
+            fill: false,
+            borderColor: '#f59e0b',  // orange
+            borderDash: [5, 5], // ligne pointillée
+            pointBackgroundColor: '#f59e0b',
+            tension: 0.4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true
+          }
         }
       }
-    }
-  });
-</script>
+    });
+  </script>
 
 <script>
     const productNames = [

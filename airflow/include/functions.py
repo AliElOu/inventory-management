@@ -13,8 +13,11 @@ from pyowm.utils.config import get_default_config
 from inventory.models import Stock, SalesPrediction
 import joblib
 import pandas as pd
+import numpy as np
+from sklearn.preprocessing import MinMaxScaler      
 from datetime import datetime, timedelta, timezone
 from datetime import date as datt
+
 def get_weather_condition(city ,day_offset=0):
     try:
         API_KEY = "5533898b6a901da35668cd4f15d6853f"
@@ -97,6 +100,26 @@ def isHoliday(date):
     is_sunday = date.weekday() == 6
     holiday_today = int(is_holiday or is_sunday)
     return holiday_today
+
+def next_7days_predictions(last_30days):
+
+    model = joblib.load('/opt/airflow/include/ts.pkl') 
+    scaler = MinMaxScaler()
+    scaled_data = scaler.fit_transform(last_30days)
+    seq_length = 30
+    future_predictions = []
+
+    current_seq = scaled_data.copy()
+
+    for _ in range(7): 
+        prediction = model.predict(current_seq.reshape(1, seq_length, 1), verbose=0)
+        future_predictions.append(prediction[0][0])
+        
+        current_seq = np.append(current_seq[1:], [[prediction[0][0]]], axis=0)
+
+    predicted_units = scaler.inverse_transform(np.array(future_predictions).reshape(-1, 1))
+
+    return predicted_units.flatten()
 
 
 

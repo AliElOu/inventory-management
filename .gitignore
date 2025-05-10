@@ -150,5 +150,6 @@ logs
 # End of https://www.gitignore.io/api/django
 
 dump.sql
-testing.ipynb
-airflow/include/out_of_stock.pkl
+*ipynb
+*pkl
+*keras

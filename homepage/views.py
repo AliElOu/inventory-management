@@ -3,10 +3,13 @@ from django.views.generic import View, TemplateView
 from inventory.models import Stock, SalesPrediction
 from transactions.models import SaleBill, PurchaseBill, SaleBillDetails, SaleItem
 from django.db.models import F, Sum, FloatField
+from django.db.models.functions import TruncDate
 from django.utils import timezone
 from datetime import timedelta
 from collections import OrderedDict
-
+import sys
+sys.path.append('/opt/airflow')
+from include.functions import next_7days_predictions # type: ignore
 
 class HomeView(View):
     template_name = "home.html"
@@ -30,16 +33,14 @@ class HomeView(View):
         total_quantity=Sum('quantity')
         ).order_by('-total_quantity')[:7]  
         today = timezone.now().date()
-        seven_days_ago = today - timedelta(days=6) 
-
         sales_by_day = (
-            SaleItem.objects
-            .filter(billno__time__date__gte=seven_days_ago)
-            .values('billno__time__date') 
-            .annotate(total_sales=Sum('totalprice'))
-            .order_by('billno__time__date')
-        )
-
+            SaleBillDetails.objects
+            .filter(billno__time__date__lt=today)
+            .values('billno__time__date')
+            .annotate(total_sales=Sum('total'))
+            .order_by('-billno__time__date')[:7]
+            )
+        sales_by_day = list(sales_by_day)[::-1]
         all_predictions = SalesPrediction.objects.select_related('stock').filter(stock__is_deleted=False).order_by('-date')
         latest_predictions = OrderedDict()
 
@@ -52,7 +53,6 @@ class HomeView(View):
         product_names2 = []
         stock_data2 = []
         predicted_sales_data2 = []
-        print(latest_predictions.values())
         for pred in latest_predictions.values():
             product_names.append(pred.stock.name[:8] + "...")
             stock_data.append(pred.stock.quantity)
@@ -65,7 +65,15 @@ class HomeView(View):
                 stock_data2.append(pred.stock.quantity)
                 predicted_sales_data2.append(pred.predicted_units)
         predicted_sales_data2 = arrondi_special(predicted_sales_data2)
-
+        last_30day_sales = list(
+            SaleBillDetails.objects
+            .filter(billno__time__date__gte=today - timedelta(days=30))
+            .annotate(date=TruncDate('billno__time'))
+            .values('date')
+            .annotate(total_sales=Sum('total'))
+            .values_list('total_sales', flat=True)  # Seulement les sommes
+        )[::-1]
+        next7days = next_7days_predictions(last_30day_sales)
         context = {
             'labels'    : labels,
             'data'      : data,
