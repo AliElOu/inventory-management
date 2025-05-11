@@ -1,5 +1,6 @@
 from django.db import models
-
+from django.utils import timezone
+import json
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, unique=True, verbose_name='Nom de la categorie')
@@ -31,6 +32,23 @@ class SalesPrediction(models.Model):
 
     date = models.DateField(auto_now_add=True)
     day_offset = models.IntegerField(default=0) 
+
+
+class SalesForecast(models.Model):
+    date = models.DateField(default=timezone.now)
+    predictions = models.TextField()  
+
+    def set_predictions(self, values):
+        """Stocke une liste Python sous forme de texte JSON"""
+        self.predictions = json.dumps(values)
+
+    def get_predictions(self):
+        """Retourne la liste Python depuis le texte JSON"""
+        return json.loads(self.predictions)
+
+    def __str__(self):
+        return f"Prévisions du {self.date}"
+
 
     
 

@@ -218,16 +218,20 @@
         {% endfor %}
        ];
     const predictedDates = [
-      "May 11, 2025", "May 12, 2025", "May 13, 2025", "May 14, 2025",
-      "May 15, 2025", "May 16, 2025", "May 17, 2025"
-    ];
-  
+        {% for item in predictions_dates %}
+          "{{ item }}",
+        {% endfor %}
+       ];
     const realSales = [
           {% for item in sales_by_day %}
             {{ item.total_sales }},
           {% endfor %}
         ];
-    const predictedSales = [1100, 1250, 1350, 1000, 800, 900, 1000];
+    const predictedSales = [
+          {% for item in 7days_predictions %}
+            {{ item }},
+          {% endfor %}
+        ];
   
     const allLabels = [...realDates, ...predictedDates];
   

@@ -10,13 +10,17 @@ django.setup()
 
 from pyowm import OWM
 from pyowm.utils.config import get_default_config
-from inventory.models import Stock, SalesPrediction
+from inventory.models import Stock, SalesPrediction, SalesForecast
+from transactions.models import SaleBillDetails
 import joblib
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler      
 from datetime import datetime, timedelta, timezone
+from django.utils import timezone as timezone2
 from datetime import date as datt
+from django.db.models.functions import TruncDate
+from django.db.models import Sum
 
 def get_weather_condition(city ,day_offset=0):
     try:
@@ -101,11 +105,25 @@ def isHoliday(date):
     holiday_today = int(is_holiday or is_sunday)
     return holiday_today
 
-def next_7days_predictions(last_30days):
+def next_7days_predictions():
 
     model = joblib.load('/opt/airflow/include/ts.pkl') 
+    today = timezone2.now().date()
+    last_30day_sales = list(
+            SaleBillDetails.objects
+            .filter(billno__time__date__gte=today - timedelta(days=30),
+                    billno__time__date__lt=today
+                    )
+            .annotate(date=TruncDate('billno__time'))
+            .values('date')
+            .annotate(total_sales=Sum('total'))
+            .values_list('total_sales', flat=True)  
+        )[::-1]
     scaler = MinMaxScaler()
-    scaled_data = scaler.fit_transform(last_30days)
+    print(last_30day_sales)
+    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    last_30day_sales = np.array(last_30day_sales).reshape(-1, 1)
+    scaled_data = scaler.fit_transform(last_30day_sales)
     seq_length = 30
     future_predictions = []
 
@@ -119,7 +137,10 @@ def next_7days_predictions(last_30days):
 
     predicted_units = scaler.inverse_transform(np.array(future_predictions).reshape(-1, 1))
 
-    return predicted_units.flatten()
+    forecast = SalesForecast()
+    forecast.date = datt.today()
+    forecast.set_predictions(arrondi_special(predicted_units.flatten().tolist()))
+    forecast.save()
 
 
 
@@ -156,3 +177,5 @@ def generate_prediction(context):
             day_offset=day_offset
         )
     
+def arrondi_special(valeurs):
+    return [int(x) + 1 if x - int(x) > 0.5 else int(x) for x in valeurs]

@@ -1,15 +1,12 @@
 from django.shortcuts import render
 from django.views.generic import View, TemplateView
-from inventory.models import Stock, SalesPrediction
+from inventory.models import Stock, SalesPrediction, SalesForecast
 from transactions.models import SaleBill, PurchaseBill, SaleBillDetails, SaleItem
 from django.db.models import F, Sum, FloatField
-from django.db.models.functions import TruncDate
 from django.utils import timezone
-from datetime import timedelta
 from collections import OrderedDict
-import sys
-sys.path.append('/opt/airflow')
-from include.functions import next_7days_predictions # type: ignore
+from datetime import date as datt
+from datetime import timedelta
 
 class HomeView(View):
     template_name = "home.html"
@@ -35,12 +32,12 @@ class HomeView(View):
         today = timezone.now().date()
         sales_by_day = (
             SaleBillDetails.objects
-            .filter(billno__time__date__lt=today)
+            .filter(billno__time__date__gte=today - timedelta(days=7),
+                    billno__time__date__lt=today)
             .values('billno__time__date')
             .annotate(total_sales=Sum('total'))
-            .order_by('-billno__time__date')[:7]
+            .order_by('billno__time__date')[:7]
             )
-        sales_by_day = list(sales_by_day)[::-1]
         all_predictions = SalesPrediction.objects.select_related('stock').filter(stock__is_deleted=False).order_by('-date')
         latest_predictions = OrderedDict()
 
@@ -65,15 +62,18 @@ class HomeView(View):
                 stock_data2.append(pred.stock.quantity)
                 predicted_sales_data2.append(pred.predicted_units)
         predicted_sales_data2 = arrondi_special(predicted_sales_data2)
-        last_30day_sales = list(
-            SaleBillDetails.objects
-            .filter(billno__time__date__gte=today - timedelta(days=30))
-            .annotate(date=TruncDate('billno__time'))
-            .values('date')
-            .annotate(total_sales=Sum('total'))
-            .values_list('total_sales', flat=True)  # Seulement les sommes
-        )[::-1]
-        next7days = next_7days_predictions(last_30day_sales)
+
+        todayy = datt.today()
+        predictions_list = []
+        try:
+            forecast = SalesForecast.objects.get(date=todayy)
+            predictions_list = forecast.get_predictions()  
+        except SalesForecast.DoesNotExist:
+            print("Aucune prédiction pour aujourd'hui.")
+
+        date_list = [today + timedelta(days=i) for i in range(7)]
+        predictions_dates = [date.strftime("%b %d, %Y") for date in date_list]
+
         context = {
             'labels'    : labels,
             'data'      : data,
@@ -88,7 +88,9 @@ class HomeView(View):
             'stock_data': stock_data,
             'predicted_sales_data': predicted_sales_data,
             'stock_predictions_info': zip(product_names2, stock_data2, predicted_sales_data2),
-            'stockout_risks_number': len(product_names2)
+            'stockout_risks_number': len(product_names2),
+            '7days_predictions' : predictions_list,
+            'predictions_dates' : predictions_dates,
         }
         return render(request, self.template_name, context)
 

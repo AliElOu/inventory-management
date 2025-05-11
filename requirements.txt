@@ -11,3 +11,5 @@ apache-airflow==2.9.1
 apache-airflow-providers-mysql
 scikit-learn
 xgboost
+tensorflow
+keras
