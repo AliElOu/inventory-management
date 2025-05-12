@@ -18,7 +18,7 @@
         <div class="info-card d-flex align-items-center">
             <i class="bi bi-currency-dollar info-icon"></i>
             <div>   
-            <div class="info-label">Total Sales</div>
+            <div class="info-label">Today's Total Sales</div>
             <div class="info-value">${{ total_sales }}</div>
             </div>
         </div>
@@ -91,17 +91,34 @@
     <div class="row">
         <div class="col-md-8">
             <div id="container" style="position: relative; height:45vh; border: 0.3mm ridge #e0e0e0; border-radius: 10px; padding: 20px; padding-bottom: 50px;" class="align-middle table-bordered">
-                <h5 style="text-align: left;">Sales Last 7days</h5>
+                <h5 style="text-align: left;">Sales last/next 7days</h5>
                 <canvas id="salesChart"></canvas>
             </div>
         </div>
         <div class="col-md-4">
+            <div id="container" style="position: relative; height:45vh; border: 0.3mm ridge #e0e0e0; border-radius: 10px; padding: 25px;" class="align-middle table-bordered">
+                <div id="categoryChart" style="width: 300px; height: 300px;"></div>             
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <div class="row">
+        <div class="col-md-9">
+            <div id="container" style="position: relative; height:45vh; border: 0.3mm ridge #e0e0e0; border-radius: 10px; " class="align-middle table-bordered">
+                <div class="chart-container">
+                    <h5 style="text-align: left;">Stock vs Predictions</h5>
+                    <canvas id="stockSalesChart"></canvas>
+                </div>
+            </div>  
+        </div>
+        <div class="col-md-3">
             <div id="container" style="position: relative; height:45vh; border: 0.3mm ridge #e0e0e0; border-radius: 10px; padding: 30px;" class="align-middle table-bordered">
-                <h4 class="text-left mb-2">Bestsellers</h4>
+                <h4 class="text-left mb-2">Bestsellers</h4> 
                 <ul class="list-unstyled mb-0">
                     {% for item in bestsellers %}
                         <li class="d-flex justify-content-between py-1">
-                        <span> <span class="h6   font-weight-bold ">{{forloop.counter}} </span> &nbsp {{ item.stock__name }}</span>
+                        <span> <span class="h6   font-weight-bold ">{{forloop.counter}} </span> &nbsp {{ item.stock__name|truncatechars:15 }}</span>
                         <span> {{item.total_quantity }} </span>
                         </li>
                     {% endfor %}
@@ -110,17 +127,7 @@
         </div>
     </div>
 
-    <br>
-
-    <div>
-        <div id="container" style="position: relative; height:45vh; border: 0.3mm ridge #e0e0e0; border-radius: 10px; " class="align-middle table-bordered">
-            <div class="chart-container">
-                <h5 style="text-align: left;">Stock vs Predictions</h5>
-                <canvas id="stockSalesChart"></canvas>
-            </div>
-        </div>  
-    </div>
-
+    
     <br>
 
     <div class="row">
@@ -210,66 +217,71 @@
 
 
 <script>
-    const ctx = document.getElementById('salesChart').getContext('2d');
-  
-    const realDates = [
+        const ctx = document.getElementById('salesChart').getContext('2d');
+
+        // Assurez-vous que realDates et predictedDates sont consécutifs (ex: 7 + 7 jours)
+        const allLabels = [
         {% for item in sales_by_day %}
-          "{{ item.billno__time__date }}",
+            "{{ item.billno__time__date }}",
         {% endfor %}
-       ];
-    const predictedDates = [
         {% for item in predictions_dates %}
-          "{{ item }}",
+            "{{ item }}",
         {% endfor %}
-       ];
-    const realSales = [
-          {% for item in sales_by_day %}
+        ];
+
+        const realSales = [
+        {% for item in sales_by_day %}
             {{ item.total_sales }},
-          {% endfor %}
+        {% endfor %}
         ];
-    const predictedSales = [
-          {% for item in 7days_predictions %}
+
+        const predictedSales = [
+        {% for item in 7days_predictions %}
             {{ item }},
-          {% endfor %}
+        {% endfor %}
         ];
-  
-    const allLabels = [...realDates, ...predictedDates];
-  
-    const salesChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: allLabels,
-        datasets: [
-          {
-            label: 'Ventes réelles',
-            data: [...realSales, null, null, null, null, null, null, null],
-            fill: true,
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: '#3b82f6',
-            pointBackgroundColor: 'rgba(54, 162, 235, 1)',
-            tension: 0.4
-          },
-          {
-            label: 'Prévisions',
-            data: [null, null, null, null, null, null, null, ...predictedSales],
-            fill: false,
-            borderColor: '#f59e0b',  // orange
-            borderDash: [5, 5], // ligne pointillée
-            pointBackgroundColor: '#f59e0b',
-            tension: 0.4
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: true
-          }
+
+        // Remplir les valeurs manquantes avec `null` au bon endroit
+        const fullRealSales = [...realSales, ...Array(predictedSales.length).fill(null)];
+        const fullPredictedSales = [...Array(realSales.length).fill(null), ...predictedSales];
+
+        const salesChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: allLabels,
+            datasets: [
+            {
+                label: 'Last 7days sales',
+                data: fullRealSales,
+                fill: true,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: '#3b82f6',
+                pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                tension: 0.4
+            },
+            {
+                label: 'Next 7days predictions',
+                data: fullPredictedSales,
+                fill: true,
+                borderColor: '#f59e0b', 
+                backgroundColor: 'rgba(245, 158, 11, 0.2)',
+                borderDash: [5, 5],
+                pointBackgroundColor: '#f59e0b',
+                tension: 0.4
+            }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+            legend: {
+                display: true
+            }
+            }
         }
-      }
-    });
+        });
+
   </script>
 
 <script>
@@ -284,7 +296,7 @@
         {{ quantity }},
       {% endfor %}
     ];
-  
+
     const predictedSalesData = [
       {% for prediction in predicted_sales_data %}
         {{ prediction }},
@@ -307,8 +319,8 @@
                 {
                     label: 'Predicted Sales',
                     data: predictedSalesData,
-                    backgroundColor: 'rgba(156, 156, 156, 0.7)',
-                    borderColor: 'rgba(156, 156, 156, 1)',
+                    backgroundColor: 'rgba(245, 158, 11, 0.5)',
+                    borderColor: '#f59e0b',
                     borderWidth: 1
                 }
             ]
@@ -344,6 +356,78 @@
             }
         }
     });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5"></script>
+
+<script>
+    const categories = {{ categories|safe }};
+    const historicalData = {{ historical_data|safe }};
+    const predictedData = {{ predicted_data|safe }};
+  
+    const totalHistorical = historicalData.reduce((a, b) => a + b, 0);
+    const totalPredicted = predictedData.reduce((a, b) => a + b, 0);
+  
+    const historicalSeries = categories.map((cat, i) => ({
+      value: historicalData[i],
+      name: cat + ` (${((historicalData[i] / totalHistorical) * 100).toFixed(1)}%)`
+    }));
+  
+    const predictedSeries = categories.map((cat, i) => ({
+      value: predictedData[i],
+      name: cat + ` (${((predictedData[i] / totalPredicted) * 100).toFixed(1)}%)`
+    }));
+  
+    const myChart = echarts.init(document.getElementById('categoryChart'));
+  
+    const option = {
+      title: {
+        text: 'Category Trends: Past vs Forecast',
+        textStyle: {
+            fontSize: 17,
+            fontWeight: 'bold',
+        }
+      },
+      tooltip: {
+        trigger: 'item'
+      },
+      legend: {
+        show: false
+      },
+      series: [
+        {
+          name: 'Historiques',
+          type: 'pie',
+          radius: ['25%', '45%'],
+          label: {
+            show: false
+          },
+          data: historicalSeries,
+          color: ['#4A90E2', '#6BA8E5', '#90C3F9', '#B1D7FC'] 
+        },
+        {
+          name: 'Prédites',
+          type: 'pie',
+          radius: ['50%', '65%'],
+          label: {
+            show: true,
+            position: 'outside',
+            formatter: '{b}',
+            fontSize: 10
+          },
+          labelLine: {
+            length: 10,
+            length2: 5
+          },
+          data: predictedSeries,
+          color: ['#F5A623', '#F7B94C', '#FAD77A', '#FCE9A8'] 
+        }
+      ]
+    };
+  
+    myChart.setOption(option);
   </script>
   
+  
+
+
 {% endblock content %}
