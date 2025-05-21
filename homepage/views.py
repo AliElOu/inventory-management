@@ -5,13 +5,12 @@ from transactions.models import SaleBill, PurchaseBill, SaleBillDetails, SaleIte
 from django.db.models import F, Sum, FloatField
 from django.utils import timezone
 from collections import OrderedDict
-from datetime import date as datt
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 class HomeView(View):
     template_name = "home.html"
     def get(self, request):    
-        today = (timezone.now().date()) - timedelta(days=1)
+        today = datetime(year=2025,month=5,day=11)
         labels = []
         data = []        
         stockqueryset = Stock.objects.filter(is_deleted=False).order_by('-quantity')

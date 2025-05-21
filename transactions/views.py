@@ -128,7 +128,6 @@ class SelectSupplierView(View):
 # used to generate a bill object and save items
 class PurchaseCreateView(View):                                                 
     template_name = 'purchases/new_purchase.html'
-
     def get(self, request, pk):
         formset = PurchaseItemFormset(request.GET or None)                      # renders an empty formset
         supplierobj = get_object_or_404(Supplier, pk=pk)                        # gets the supplier object
@@ -139,62 +138,58 @@ class PurchaseCreateView(View):
         return render(request, self.template_name, context)
 
     def post(self, request, pk):
-        formset = PurchaseItemFormset(request.POST)                             # recieves a post method for the formset
-        supplierobj = get_object_or_404(Supplier, pk=pk)                        # gets the supplier object
-        if formset.is_valid():
-            # saves bill
-            try:
-                billobj = form.save(commit=False)
-                billobj.save()
+        formset = PurchaseItemFormset(request.POST)
+        supplierobj = get_object_or_404(Supplier, pk=pk)
 
+        if formset.is_valid():
+            try:
+                # Création manuelle de la facture
+                billobj = PurchaseBill.objects.create(supplier=supplierobj)
             except Exception as exc:
-                print('Exception error! ',exc)
+                print('Exception error! ', exc)
                 context = {
-                    'form'      : form,
-                    'formset'   : formset,
+                    'formset': formset,
+                    'supplier': supplierobj,
                 }
                 return render(request, self.template_name, context)
-            
-            try:
-                # create bill details object
-                billdetailsobj = SaleBillDetails(billno=billobj)
-                billdetailsobj.save()
 
+            try:
+                billdetailsobj = PurchaseBillDetails(billno=billobj)
+                billdetailsobj.total = 0 
+                billdetailsobj.save()
             except Exception as exc:
-                print('Exception error! ',exc)
-                # Removing purchase transaction to keep transaction data clean
+                print('Exception error! ', exc)
                 billobj.delete()
                 context = {
-                    'form'      : form,
-                    'formset'   : formset,
+                    'formset': formset,
+                    'supplier': supplierobj,
                 }
                 return render(request, self.template_name, context)
 
-            for form in formset:                                                # for loop to save each individual form as its own object
-                # false saves the item and links bill to the item
+            for form in formset:
                 billitem = form.save(commit=False)
-                billitem.billno = billobj                                       # links the bill object to the items
-                # gets the stock item
-                stock = get_object_or_404(Stock, name=billitem.stock.name)       # gets the item
-                # calculates the total price
+                billitem.billno = billobj
+
+                stock = get_object_or_404(Stock, name=billitem.stock.name)
                 billitem.totalprice = billitem.perprice * billitem.quantity
-                # updates quantity in stock db
-                stock.quantity += billitem.quantity                             # updates quantity
+
+                stock.quantity += billitem.quantity
                 billdetailsobj.total += billitem.totalprice
-                # saves bill item and stock
+
                 stock.save()
                 billitem.save()
 
             billdetailsobj.save()
             messages.success(request, "Purchased items have been registered successfully")
             return redirect('purchase-bill', billno=billobj.billno)
-        formset = PurchaseItemFormset(request.GET or None)
+
+        # Si le formset n'est pas valide
         context = {
-            'formset'   : formset,
-            'supplier'  : supplierobj
+            'formset': formset,
+            'supplier': supplierobj,
         }
         return render(request, self.template_name, context)
-
+    
 # used to delete a bill object
 class PurchaseDeleteView(SuccessMessageMixin, DeleteView):
     model = PurchaseBill
