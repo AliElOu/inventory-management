@@ -1,0 +1,205 @@
+:root {
+            --primary-color: #337ab7;
+            --secondary-color: #18435A;
+            --light-blue: #8ABCD7;
+            --background-color: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Background curved line */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 30%;
+            height: 100%;
+            background-image: url("{% static 'images/curve-bg.svg' %}");
+            background-repeat: no-repeat;
+            background-position: right center;
+            z-index: -1;
+            opacity: 0.3;
+        }
+        
+        .login-container {
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .brand-logo {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+ 
+        
+        .chart-icon {
+            position: absolute;
+            left: 15%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100px;
+            height: 80px;
+            opacity: 0.2;
+        }
+        
+        .chart-bar {
+            display: inline-block;
+            width: 18px;
+            height: 60px;
+            margin-right: 8px;
+            background-color: var(--light-blue);
+            border-radius: 3px;
+            transform-origin: bottom;
+        }
+        
+        .chart-bar:nth-child(1) {
+            height: 30px;
+        }
+        
+        .chart-bar:nth-child(2) {
+            height: 50px;
+        }
+        
+        .chart-bar:nth-child(3) {
+            height: 40px;
+        }
+        
+        .chart-bar:nth-child(4) {
+            height: 60px;
+        }
+        
+        .brand-title {
+            color: var(--secondary-color);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0;
+            line-height: 1.2;
+        }
+        
+        .brand-subtitle {
+            color: var(--secondary-color);
+            font-size: 1rem;
+            margin-top: 0;
+        }
+        
+        .login-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-control {
+            height: 50px;
+            border-radius: 5px;
+            border: 1px solid #e1e5eb;
+            padding: 10px 15px 10px 45px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(51, 122, 183, 0.25);
+        }
+        
+        .input-icon {
+            position: relative;
+        }
+        
+        .input-icon i {
+            position: absolute;
+            left: 15px;
+            top: 17px;
+            color: #b8c2cc;
+            transition: all 0.3s;
+        }
+        
+        .input-icon .form-control:focus + i {
+            color: var(--primary-color);
+        }
+        
+        .forgot-password {
+            color: #333;
+            font-size: 14px;
+            text-decoration: none;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        
+        .login-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            max-width: 150px;
+        }
+        
+        .login-btn:hover {
+            background-color: #2e6da4;
+            transform: translateY(-1px);
+        }
+        
+        .dots-grid {
+            position: absolute;
+            left: 18%;
+            top: 60%;
+            display: grid;
+            grid-template-columns: repeat(7, 8px);
+            grid-template-rows: repeat(7, 8px);
+            grid-gap: 6px;
+            opacity: 0.2;
+        }
+        
+        .dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--light-blue);
+            border-radius: 50%;
+        }
+        
+        @media (max-width: 768px) {
+            .brand-title {
+                font-size: 1.8rem;
+            }
+            
+            .brand-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .login-card {
+                padding: 25px;
+            }
+            
+            .chart-icon, .dots-grid {
+                display: none;
+            }
+        }

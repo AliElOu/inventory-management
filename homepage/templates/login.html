@@ -1,75 +1,65 @@
 {% load static %}
-
 {% load crispy_forms_tags %}
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/bootstrap.min.css' %}">
-
-    <!-- Main CSS, then Sidebar CSS-->
-    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/sidebar.css' %}">
-
-    <title>Invi - Login</title>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+    <title>Stock & Sales Management - Login</title>
+    
 </head>
 
 <body>
-
-    <div class="align-middle" style="color: #414141; font-style: bold; font-size: 3rem;">Invi</div>
-    <div class="align-middle" style="color: #414141">An Inventory Management System</div>
-    <br><br><br>
-
-    <div class="row d-flex justify-content-center">
-        <div class="col-md-6">
-            {% if user.is_authenticated %}
-
-            <br><br>
-            <h2 class="align-middle">You are already logged in, {{ request.user.username }}!</h2>
-            <div class="border-top pt-3 align-middle"> <br>
-                <a class="btn ghost-blue" href="{% url 'home' %}">Go back home</a> <br><br>
-                <a class="btn ghost-red" href="{% url 'logout' %}">Log Out</a>
+    <div class="login-container">
+        <!-- Brand Logo and Title -->
+        <div class="brand-logo">
+            <div class="logo-icon">
+                <img src="{% static 'images/logo.png' %}" alt="Logo" width="120">
             </div>
-
-            {% else %}
-
-            <div class="content-section">
-                <form method="POST">
-                    {% csrf_token %}
-                    <fieldset class="form-group">
-                        <div class="align-middle">
-                            <legend class="border-bottom mb-4">Please Login to use Invi</legend>
-                        </div>
-                        {{ form|crispy }}
-                    </fieldset>
-                    <div class="form-group">
-                        <div class="align-middle">
-                            <button class="ghost-pink" type="submit">Log In</button>
-                            {# <button class="ml-2 ghost-red">Exit</button> #}
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="align-middle"> <a href="{% url 'about' %}">About</a> </div>
-
-            {% endif %}
-
+            <h1 class="brand-title">Stock & Sales</h1>
+            <h2 class="brand-subtitle">Management</h2>
+        </div>
+        
+        <!-- Chart Icon (Background) -->
+        <div class="chart-icon">
+            <div class="chart-bar"></div>
+            <div class="chart-bar"></div>
+            <div class="chart-bar"></div>
+            <div class="chart-bar"></div>
+        </div>
+        
+        <!-- Dots Grid (Background) -->
+        <div class="dots-grid">
+            {% for i in "1234567890123456789012345678901234567890123" %}
+                <div class="dot"></div>
+            {% endfor %}
+        </div>
+        
+        <!-- Login Card -->
+        <div class="login-card">
+            <form method="POST">
+                {% csrf_token %}
+                
+                {{ form|crispy }}
+                
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="" class="forgot-password">Forgot password?</a>
+                    <button type="submit" class="login-btn">Login</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <!-- Optional JavaScript -->
     <script src="{% static 'bootstrap/jquery-3.3.1.slim.min.js' %}"></script>
     <script src="{% static 'bootstrap/popper.min.js' %}"></script>
     <script src="{% static 'bootstrap/bootstrap.min.js' %}"></script>
-
 </body>
-
 </html>
