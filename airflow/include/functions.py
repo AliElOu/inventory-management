@@ -11,7 +11,7 @@ django.setup()
 from pyowm import OWM
 from pyowm.utils.config import get_default_config
 from inventory.models import Stock, SalesPrediction, SalesForecast
-from transactions.models import SaleBillDetails
+from transactions.models import SaleBillDetails, SaleItem
 import joblib
 import pandas as pd
 import numpy as np
@@ -108,7 +108,7 @@ def isHoliday(date):
 def next_7days_predictions():
 
     model = joblib.load('/opt/airflow/include/ts.pkl') 
-    today = timezone2.now().date()
+    today = datetime(year=2025, month=5, day=11) # timezone2.now().date()
     last_30day_sales = list(
             SaleBillDetails.objects
             .filter(billno__time__date__gte=today - timedelta(days=30),
@@ -120,8 +120,6 @@ def next_7days_predictions():
             .values_list('total_sales', flat=True)  
         )[::-1]
     scaler = MinMaxScaler()
-    print(last_30day_sales)
-    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$")
     last_30day_sales = np.array(last_30day_sales).reshape(-1, 1)
     scaled_data = scaler.fit_transform(last_30day_sales)
     seq_length = 30
@@ -142,13 +140,10 @@ def next_7days_predictions():
     forecast.set_predictions(arrondi_special(predicted_units.flatten().tolist()))
     forecast.save()
 
-
-
     
 def generate_prediction(context):
     
     model = joblib.load('/opt/airflow/include/out_of_stock.pkl') 
-
     day_offset = 1
     target_date = datetime.now(timezone.utc).date() + timedelta(days=day_offset)
     stocks = Stock.objects.all()
@@ -176,6 +171,19 @@ def generate_prediction(context):
             date=target_date,
             day_offset=day_offset
         )
+        
     
 def arrondi_special(valeurs):
     return [int(x) + 1 if x - int(x) > 0.5 else int(x) for x in valeurs]
+
+def update_true_sales():
+    yesterday = datt.today() - timedelta(days=1)
+    predictions = SalesPrediction.objects.filter(date=yesterday)
+    for prediction in predictions:
+        sale_items = SaleItem.objects.filter(
+            stock=prediction.stock,
+            billno__time__date=prediction.date
+        )
+        total_sold = sum(item.quantity for item in sale_items)
+        prediction.True_sales = total_sold
+        prediction.save()

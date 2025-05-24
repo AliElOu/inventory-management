@@ -13,7 +13,7 @@
 
 
     <br>
-    <div class="row g-4">
+    <div class="row g-4" style="width: 74vw;">
         <div class="col-md-3 col-sm-6">
         <a href="{% url 'sales-list' %}" class="text-decoration-none">
         <div class="info-card d-flex align-items-center">
@@ -53,10 +53,10 @@
             <div style ="color:#DC3545;" class="info-value"> {{ stockout_risks_number }} </div>
             </div>
         </div>
+        
         </div>
     </div>
-
-    <div class="modal fade" id="stockoutModal" tabindex="-1" aria-labelledby="stockoutModalLabel" aria-hidden="true">
+<div class="modal fade" id="stockoutModal" tabindex="-1" aria-labelledby="stockoutModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -90,26 +90,27 @@
             </div>
         </div>
     </div>
+    
 
 
-    <div class="row">
+    <div class="row" style="width: 74vw;">
         <div class="col-md-8">
-            <div id="container" style="position: relative; height:45vh; border: 0.3mm ridge #e0e0e0; border-radius: 10px; padding: 20px; padding-bottom: 50px;" class="align-middle table-bordered">
+            <div id="container" style="height: 45vh;  position: relative; border: 0.3mm ridge #e0e0e0; border-radius: 10px; padding: 25px; padding-bottom: 50px;" class="align-middle table-bordered">
                 <h5 style="text-align: left;">Sales last/next 7days</h5>
                 <canvas id="salesChart"></canvas>
             </div>
         </div>
         <div class="col-md-4">
-            <div id="container" style="position: relative; height:45vh; border: 0.3mm ridge #e0e0e0; border-radius: 10px; padding: 25px;" class="align-middle table-bordered">
-                <div id="categoryChart" style="width: 300px; height: 300px;"></div>             
+            <div id="container" style="height: 45vh; width:23vw ; position: relative; border: 0.3mm ridge #e0e0e0; border-radius: 10px; padding-left: 25px; padding-top: 25px; padding-right: 25px;" class="align-middle table-bordered">
+                <div id="categoryChart" style="width: 20vw; height: 45vh;"></div>             
             </div>
         </div>
     </div>
 
     <br>
-    <div class="row">
+    <div class="row" style="width: 74vw;">
         <div class="col-md-9">
-            <div id="container" style="position: relative; height:45vh; border: 0.3mm ridge #e0e0e0; border-radius: 10px; " class="align-middle table-bordered">
+            <div id="container" style="position: relative; padding-bottom: 30px ; border: 0.3mm ridge #e0e0e0; border-radius: 10px; " class="align-middle table-bordered">
                 <div class="chart-container">
                     <h5 style="text-align: left;">Stock vs Predictions</h5>
                     <canvas id="stockSalesChart"></canvas>
@@ -117,7 +118,7 @@
             </div>  
         </div>
         <div class="col-md-3">
-            <div id="container" style="position: relative; height:45vh; border: 0.3mm ridge #e0e0e0; border-radius: 10px; padding: 30px;" class="align-middle table-bordered">
+            <div id="container" style="width: 17vw;position: relative; border: 0.3mm ridge #e0e0e0; border-radius: 10px; padding: 30px;" class="align-middle table-bordered">
                 <h4 class="text-left mb-2">Bestsellers</h4> 
                 <ul class="list-unstyled mb-0">
                     {% for item in bestsellers %}
@@ -134,7 +135,7 @@
     
     <br>
 
-    <div class="row">
+    <div class="row" style="width: 74vw;">
         <div class="col-md-6">
             <a href="{% url 'select-supplier' %}" class="btn ghost-blue btn-lg btn-block btn-huge">New Incoming Stock</a>
         </div>
@@ -145,8 +146,8 @@
 
     <br>
 
-    <div class="content-section">
-        <div class="row">
+    <div class="content-section" style="width: 72.5vw;">
+        <div class="row" >
 
             <div class="col-md-6">
                 <div style="color:#228DFF; font-style: bold; font-size: 1.3em; border-bottom: 2px solid #228DFF">Most Recent Sales</div><br>

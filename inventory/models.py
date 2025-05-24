@@ -30,9 +30,9 @@ class SalesPrediction(models.Model):
     seasonality = models.CharField(max_length=20)
     holiday = models.BooleanField()
 
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField()
     day_offset = models.IntegerField(default=0) 
-
+    True_sales = models.FloatField(null=True, blank=True)
 
 class SalesForecast(models.Model):
     date = models.DateField(default=timezone.now)
