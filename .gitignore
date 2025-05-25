@@ -153,3 +153,4 @@ dump.sql
 *ipynb
 *pkl
 *keras
+*.csv

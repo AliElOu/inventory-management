@@ -29,7 +29,9 @@ class SalesPrediction(models.Model):
     weather_condition = models.CharField(max_length=50)
     seasonality = models.CharField(max_length=20)
     holiday = models.BooleanField()
-
+    inventory_level = models.IntegerField(null=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Prix', null=True)  
+    discount = models.DecimalField(max_digits=5, decimal_places=2, default=0, verbose_name='Remise (%)')
     date = models.DateField()
     day_offset = models.IntegerField(default=0) 
     True_sales = models.FloatField(null=True, blank=True)

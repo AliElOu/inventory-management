@@ -165,6 +165,9 @@ def generate_prediction(context):
         SalesPrediction.objects.create(
             stock=stock,
             predicted_units=prediction,
+            inventory_level=stock.quantity,
+            price=stock.price,
+            discount=stock.discount,
             weather_condition=context["weather"],
             holiday=context["holiday"],
             seasonality=context["season"],
@@ -187,3 +190,64 @@ def update_true_sales():
         total_sold = sum(item.quantity for item in sale_items)
         prediction.True_sales = total_sold
         prediction.save()
+
+
+
+def retrain_model():
+    data = list(SalesPrediction.objects.filter(True_sales__isnull=False)
+                .values("stock__category", "price", "discount",
+                        "inventory_level", "weather_condition",
+                        "holiday", "seasonality", "True_sales"))
+
+    df = pd.DataFrame(data)
+    if df.empty:
+        print("Pas assez de données pour réentraîner.")
+        return
+
+    df.rename(columns={
+        "stock__category": "Category",
+        "price": "Price",
+        "discount": "Discount",
+        "inventory_level": "Inventory Level",
+        "weather_condition": "Weather Condition",
+        "holiday": "Holiday/Promotion",
+        "seasonality": "Seasonality",
+        "True_sales": "Units Sold"
+    }, inplace=True)
+
+    features = ["Category", "Price", "Discount", "Inventory Level",
+                "Weather Condition", "Holiday/Promotion", "Seasonality"]
+    target = "Units Sold"
+
+    categorical_features = ["Weather Condition", "Holiday/Promotion", "Seasonality", "Category"]
+    numerical_features = list(set(features) - set(categorical_features))
+
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ("num", StandardScaler(), numerical_features),
+            ("cat", OneHotEncoder(handle_unknown="ignore"), categorical_features)
+        ]
+    )
+
+    X = df[features]
+    y = df[target]
+    print(X)
+    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    print(y)
+    # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # model = Pipeline(steps=[
+    #     ("preprocessor", preprocessor),
+    #     ("regressor", RandomForestRegressor(n_estimators=100, random_state=42))
+    # ])
+
+    # model.fit(X_train, y_train)
+    # y_pred = model.predict(X_test)
+
+    # mae = mean_absolute_error(y_test, y_pred)
+    # print(f"New model MAE: {mae}")
+
+    # model_path = f"/opt/airflow/include/out_of_stock_{str(date.today())}.pkl"
+    # joblib.dump(model, model_path)
+
+    # print(f"Nouveau modèle sauvegardé à {model_path}")
