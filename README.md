@@ -35,6 +35,9 @@ Built with **Django**, orchestrated by **Apache Airflow**, and fully containeriz
 
 ---
 
+models notebooks repo:
+https://github.com/AliElOu/predictions-models--inventory-management
+
 ##  Get Started
 
 ```bash
