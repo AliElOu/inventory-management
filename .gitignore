@@ -149,8 +149,7 @@ major project.code-workspace
 logs
 # End of https://www.gitignore.io/api/django
 
-dump.sql
 *ipynb
-*pkl
+# *pkl
 *keras
 *.csv

@@ -231,23 +231,18 @@ def retrain_model():
 
     X = df[features]
     y = df[target]
-    print(X)
-    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-    print(y)
-    # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # model = Pipeline(steps=[
-    #     ("preprocessor", preprocessor),
-    #     ("regressor", RandomForestRegressor(n_estimators=100, random_state=42))
-    # ])
+    model = Pipeline(steps=[
+        ("preprocessor", preprocessor),
+        ("regressor", XGBRegressor(learning_rate=0.1, max_depth=3, gamma=0.01, n_estimators=500, random_state=42))
+    ])
 
-    # model.fit(X_train, y_train)
-    # y_pred = model.predict(X_test)
+    model.fit(X_train, y_train)
 
-    # mae = mean_absolute_error(y_test, y_pred)
-    # print(f"New model MAE: {mae}")
+    model_path = f"/opt/airflow/include/out_of_stock_{str(date.today())}.pkl"
+    joblib.dump(model, model_path)
 
-    # model_path = f"/opt/airflow/include/out_of_stock_{str(date.today())}.pkl"
-    # joblib.dump(model, model_path)
+    print(f"Nouveau modèle sauvegardé à {model_path}")
 
-    # print(f"Nouveau modèle sauvegardé à {model_path}")
+

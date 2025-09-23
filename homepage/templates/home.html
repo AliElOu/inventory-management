@@ -223,7 +223,6 @@
 <script>
         const ctx = document.getElementById('salesChart').getContext('2d');
 
-        // Assurez-vous que realDates et predictedDates sont consécutifs (ex: 7 + 7 jours)
         const allLabels = [
         {% for item in sales_by_day %}
             "{{ item.billno__time__date }}",
@@ -245,7 +244,6 @@
         {% endfor %}
         ];
 
-        // Remplir les valeurs manquantes avec `null` au bon endroit
         const fullRealSales = [...realSales, ...Array(predictedSales.length).fill(null)];
         const fullPredictedSales = [...Array(realSales.length).fill(null), ...predictedSales];
 

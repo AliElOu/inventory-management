@@ -1,4 +1,6 @@
-.sidebar-text, .sidebar-text:hover, .sidebar-text:focus {
+.sidebar-text,
+.sidebar-text:hover,
+.sidebar-text:focus {
     color: inherit;
     text-decoration: none;
     transition: all 0.3s;
@@ -135,9 +137,11 @@ a.nav-button {
     #sidebar {
         margin-left: -250px;
     }
+
     #sidebar.active {
         margin-left: 0;
     }
+
     #sidebarCollapse span {
         display: none;
     }
