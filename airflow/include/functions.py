@@ -1,8 +1,10 @@
 import os
 import sys
 
+# Add Django project path to Python path
 sys.path.append('/opt/airflow')
 
+# Set Django settings module
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 
 import django

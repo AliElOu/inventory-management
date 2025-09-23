@@ -22,8 +22,8 @@ services:
       DB_NAME: ${DB_NAME:-inventory}
       DB_USER: ${DB_USER:-root}
       DB_PASSWORD: ${DB_PASSWORD:-password123}
-    volumes:
-      - .:/app
+    # volumes:
+    #   - .:/app
 
   airflow:
     build:

@@ -9,3 +9,13 @@ RUN apt-get update && apt-get install -y \
 USER airflow
 COPY requirements.txt /tmp/requirements.txt
 RUN pip install -r /tmp/requirements.txt
+
+# Copy Django project files
+COPY --chown=airflow:root core/ /opt/airflow/core/
+COPY --chown=airflow:root inventory/ /opt/airflow/inventory/
+COPY --chown=airflow:root transactions/ /opt/airflow/transactions/
+COPY --chown=airflow:root homepage/ /opt/airflow/homepage/
+COPY --chown=airflow:root manage.py /opt/airflow/
+
+# Set PYTHONPATH to include the Django project
+ENV PYTHONPATH="/opt/airflow"
