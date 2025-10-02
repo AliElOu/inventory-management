@@ -22,6 +22,17 @@ services:
       DB_NAME: ${DB_NAME:-inventory}
       DB_USER: ${DB_USER:-root}
       DB_PASSWORD: ${DB_PASSWORD:-password123}
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: ${DB_PASSWORD:-password123}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-password123}
     # volumes:
     #   - .:/app
 
