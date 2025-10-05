@@ -4,6 +4,8 @@ USER root
 RUN apt-get update && apt-get install -y \
     default-libmysqlclient-dev \
     build-essential \
+    netcat-openbsd \
+    default-mysql-client \
     && rm -rf /var/lib/apt/lists/*
 
 USER airflow
@@ -19,3 +21,42 @@ COPY --chown=airflow:root manage.py /opt/airflow/
 
 # Set PYTHONPATH to include the Django project
 ENV PYTHONPATH="/opt/airflow"
+
+# Set default values for database connection
+ENV DB_HOST=db
+ENV DB_PORT=3306
+
+# # Wait for database then keep container running for manual commands
+# ENTRYPOINT ["/bin/bash", "-c", "\
+# echo '🚀 Starting Airflow container...' && \
+# echo '⏳ Waiting for MySQL database at ${DB_HOST}:${DB_PORT}...' && \
+# until nc -z "$DB_HOST" "$DB_PORT" -e 'SELECT 1' >/dev/null 2>&1; do \
+#   echo '🔄 Database not ready, waiting 3 seconds...' && \
+#   sleep 3; \
+# done && \
+# echo '✅ Database is ready!' && \
+# echo '📦 Running database migrations...' && \
+# airflow db migrate && \
+# echo '✅ Database migrations completed!' && \
+# echo '🎯 Container ready for manual Airflow commands' && \
+# echo 'ℹ️  Use: docker exec -it inventory-management-airflow-1 bash' && \
+# sleep infinity"]
+
+ENTRYPOINT ["/bin/bash", "-c", "\
+echo '🚀 Starting Airflow container...' && \
+echo '⏳ Waiting for MySQL database at ${DB_HOST}:${DB_PORT}...' && \
+until nc -z -w 5 \"$DB_HOST\" \"$DB_PORT\"; do \
+  echo \"🔄 Database not ready, waiting 5 seconds...\"; \
+  sleep 5; \
+done; \
+echo '✅ Database is ready!'; \
+echo '📦 Running database migrations...'; \
+airflow db migrate; \
+echo '✅ Database migrations completed!'; \
+echo '👤 Creating admin user if needed...'; \
+airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com || true; \
+airflow webserver & airflow scheduler; \
+echo 'ℹ️  Use: docker exec -it inventory-management-airflow-1 bash'; \
+tail -f /dev/null \
+"]
+

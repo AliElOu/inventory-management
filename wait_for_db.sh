@@ -52,7 +52,7 @@ if [ ! -f "$INIT_FLAG_FILE" ]; then
     
     # Import the SQL file into the database
     echo "📂 Importing initial data from inventory.sql..."
-    mysql --ssl=0 --default-character-set=utf8 -h "$DB_HOST" -P "$DB_PORT" -u "${MYSQL_USER:-root}" -p"${MYSQL_ROOT_PASSWORD:-root}" "${MYSQL_DATABASE:-inventory}" < inventory.sql    
+    mysql --ssl=0 --default-character-set=utf8 -h "$DB_HOST" -P "$DB_PORT" -u "${DB_USER:-root}" -p"${DB_PASSWORD:-password123}" "${DB_NAME:-inventory}" < inventory.sql    
     
     # Create flag file to indicate database has been initialized (only if everything succeeded)
     touch "$INIT_FLAG_FILE"

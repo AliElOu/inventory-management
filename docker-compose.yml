@@ -45,17 +45,17 @@ services:
     depends_on:
       - db
     environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_PASSWORD: ${DB_PASSWORD:-password123}
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: mysql+mysqldb://root:${DB_PASSWORD:-password123}@db:3306/${DB_NAME:-inventory}
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/airflow/dags
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'true'
     volumes:
-      - ./airflow:/opt/airflow/airflow
+      - ./airflow/dags:/opt/airflow/dags
       - ./airflow/include:/opt/airflow/include
-    command: >
-      bash -c "airflow db migrate &&
-               airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com || true &&
-               airflow webserver & airflow scheduler"
 
 volumes:
   mysql_data:

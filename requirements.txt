@@ -13,6 +13,8 @@ apache-airflow-providers-mysql
 pandas==2.2.3
 scikit-learn
 joblib==1.4.0
+tensorflow>=2.15.0
+keras
 
 # Weather API
 pyowm
