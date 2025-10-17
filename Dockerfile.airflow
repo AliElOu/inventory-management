@@ -25,6 +25,9 @@ ENV PYTHONPATH="/opt/airflow"
 # Set default values for database connection
 ENV DB_HOST=db
 ENV DB_PORT=3306
+ENV DB_NAME=inventory
+ENV DB_USER=root
+ENV DB_PASSWORD=root
 
 # # Wait for database then keep container running for manual commands
 # ENTRYPOINT ["/bin/bash", "-c", "\
